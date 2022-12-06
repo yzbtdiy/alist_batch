@@ -11,7 +11,7 @@
 
 ### 用法说明
 
-
+[Bilibili视频介绍](https://www.bilibili.com/video/BV1uP411K747)
 
 * Golang 编译的二进制文件可直接运行(alist_batch.exe)
   * 初次运行会自动生成配置模板和阿里云资源模板
