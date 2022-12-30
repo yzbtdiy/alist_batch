@@ -7,6 +7,8 @@
 * 操作前验证 cookie 有效性, cookie 无效自动更新
 * 配置文件和阿里云资源文件使用 yaml 文件保存
 
+网友**DayoWong0**提供了一个油猴脚本可以从浏览器打开的阿里云盘链接抓取资源名和链接, 大家可以试试 [脚本地址](https://greasyfork.org/zh-CN/scripts/457223-%E5%A4%8D%E5%88%B6%E4%B8%BA%E6%B7%BB%E5%8A%A0%E5%88%B0alist%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E5%88%86%E4%BA%AB%E9%93%BE%E6%8E%A5%E7%9A%84%E6%A0%BC%E5%BC%8F)
+
 #### 如果您不了解Alist, 请查看官网 [https://alist.nn.ci/zh/](https://alist.nn.ci/zh/)
 
 ### 用法说明
