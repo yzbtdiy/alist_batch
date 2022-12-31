@@ -1,7 +1,7 @@
 package funcs
 
 import (
-	"alist_batch/modules"
+	"github.com/yzbtdiy/alist_batch/modules"
 
 	"fmt"
 	"os"

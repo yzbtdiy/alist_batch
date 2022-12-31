@@ -1,7 +1,7 @@
 package main
 
 import (
-	"alist_batch/funcs"
+	"github.com/yzbtdiy/alist_batch/funcs"
 )
 
 func main() {

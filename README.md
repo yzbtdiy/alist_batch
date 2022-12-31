@@ -27,6 +27,9 @@
 * 下载源码编译
   * 代码目录 `go build -o alist_batch.exe main.go`
 
+* 使用 `go ininstall` 安装
+  * `go ininstall github.com/yzbtdiy/alist_batch@latest`
+
 ### other
 
 * alist 的登录用户和密码仅用于自动获取 cookie, 手动获取有效cookie填入config.yaml可以不用添加用户和密码
