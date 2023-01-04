@@ -1,4 +1,4 @@
-module alist_batch
+module github.com/yzbtdiy/alist_batch
 
 go 1.19
 
