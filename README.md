@@ -28,7 +28,7 @@
   * 代码目录 `go build -o alist_batch.exe main.go`
 
 * 使用 `go ininstall` 安装
-  * `go ininstall github.com/yzbtdiy/alist_batch@latest`
+  * `go install github.com/yzbtdiy/alist_batch@latest`
 
 ### other
 
