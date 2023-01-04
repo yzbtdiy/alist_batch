@@ -1,7 +1,7 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/modules"
+	"github.com/yzbtdiy/alist_batch/models"
 
 	"fmt"
 	"os"
@@ -28,9 +28,9 @@ func CheckFile(path string) bool {
 	return true
 }
 
-func GetConfig(fileName string) *modules.Config {
-	// _conf := modules.Config{}
-	var _conf *modules.Config
+func GetConfig(fileName string) *models.Config {
+	// _conf := models.Config{}
+	var _conf *models.Config
 	content, err := os.ReadFile("./" + fileName)
 	if err != nil {
 		fmt.Println("读取配置文件出错")
@@ -44,7 +44,7 @@ func GetConfig(fileName string) *modules.Config {
 }
 
 // 修改配置文件, 添加token
-func ModConfig(fileName string, oldConf *modules.Config, token string) {
+func ModConfig(fileName string, oldConf *models.Config, token string) {
 	oldConf.Token = token
 	newConf, err := yaml.Marshal(oldConf)
 	if err != nil {
@@ -64,7 +64,7 @@ func GetShareList(fileName string) map[string]map[string]string {
 	return shareListContent
 }
 
-func BuildPushData(mountPath string, aliUrl string, config *modules.Config) string {
+func BuildPushData(mountPath string, aliUrl string, config *models.Config) string {
 	reId, _ := regexp.Compile("https://www.aliyundrive.com/s/(.*)/folder")
 	reFolder, _ := regexp.Compile("/folder/(.*)$")
 	reShareId := reId.FindStringSubmatch(aliUrl)
@@ -72,7 +72,7 @@ func BuildPushData(mountPath string, aliUrl string, config *modules.Config) stri
 	shareId := reShareId[len(reShareId)-1]
 	shareFolder := reShareFolder[len(reShareFolder)-1]
 
-	addition := new(modules.Addition)
+	addition := new(models.Addition)
 	addition.RefreshToken = config.RefreshToken
 	addition.ShareId = shareId
 	addition.SharePwd = ""
@@ -83,7 +83,7 @@ func BuildPushData(mountPath string, aliUrl string, config *modules.Config) stri
 	additionJson, _ := json.Marshal(addition)
 	additionData := string(additionJson)
 
-	data := modules.PushData{
+	data := models.PushData{
 		MountPath:       mountPath,
 		Order:           0,
 		Remark:          "",
@@ -122,7 +122,7 @@ func Start() {
 	addStorageApi := conf.Url + "/api/admin/storage/create"
 
 	// 将用户名和密码转为json
-	loginData := modules.AuthJson{
+	loginData := models.AuthJson{
 		Username: conf.Auth.Username,
 		Password: conf.Auth.Password,
 	}
@@ -136,7 +136,7 @@ func Start() {
 	httpClient := resty.New()
 	// 通过尝试存储列表验证token是否有效
 	if conf.Token != "ALIST_TOKEN" && conf.Token != "" {
-		resData := &modules.ResData{}
+		resData := &models.ResData{}
 		httpClient.R().SetResult(resData).
 			SetHeader("Content-Type", "application/json").
 			SetHeader("Authorization", conf.Token).
@@ -164,7 +164,7 @@ func Start() {
 	} else {
 		//token无效重新获取
 		fmt.Println("token无效, 尝试重新获取")
-		loginResData := &modules.LoginRes{}
+		loginResData := &models.LoginRes{}
 		httpClient.R().SetResult(loginResData).
 			SetHeader("Content-Type", "application/json").
 			SetBody(string(authJson)).

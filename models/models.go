@@ -1,4 +1,4 @@
-package modules
+package models
 
 type Config struct {
 	Url          string `yaml:"url"`
