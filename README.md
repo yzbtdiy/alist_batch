@@ -25,9 +25,12 @@
   * 修改后运行 alist_batch.exe 即可, 推荐命令行执行, 双击运行不会输出信息
 
 * 下载源码编译
-  * 代码目录 `go build -o alist_batch.exe main.go`
+  * `git clone https://github.com/yzbtdiy/alist_batch.git`
+  * `cd alist_batch`
+  * `go mod tidy`
+  * `go build .`
 
-* 使用 `go ininstall` 安装
+* 使用 `go install` 安装
   * `go install github.com/yzbtdiy/alist_batch@latest`
 
 ### other
