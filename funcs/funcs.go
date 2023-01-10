@@ -1,11 +1,12 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"fmt"
 	"os"
 	"regexp"
+	"sync"
+
+	"github.com/yzbtdiy/alist_batch/models"
 
 	"github.com/go-resty/resty/v2"
 	jsoniter "github.com/json-iterator/go"
@@ -50,7 +51,7 @@ func ModConfig(fileName string, oldConf *models.Config, token string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	os.WriteFile("./"+fileName, newConf, 0777)
+	os.WriteFile("./"+fileName, newConf, 0o777)
 }
 
 func GetShareList(fileName string) map[string]map[string]string {
@@ -106,13 +107,12 @@ func Start() {
 
 	if conf.Url == "ALIST_URL" {
 		fmt.Println("url 未配置, 请检查配置文件")
-
 	}
 	if conf.RefreshToken == "ALI_YUNPAN_REFRESH_TOKEN" {
 		fmt.Println("refresh_token 未配置, 请检查配置文件")
 	}
 
-	if  conf.Auth.Username == "USERNAME" && conf.Auth.Password == "PASSWORD" && conf.Token == "ALIST_TOKEN" {
+	if conf.Auth.Username == "USERNAME" && conf.Auth.Password == "PASSWORD" && conf.Token == "ALIST_TOKEN" {
 		fmt.Println("token和用户密码至少要配置一项, 请检查配置文件")
 	}
 
@@ -143,26 +143,33 @@ func Start() {
 			Get(storageListApi)
 		if resData.Code == 200 {
 			shareListData := GetShareList("./ali_share.yaml")
+			wg := &sync.WaitGroup{}
 			for category, shareList := range shareListData {
 				// fmt.Println(category)
 				for shareName, shareUrl := range shareList {
 					// fmt.Println(shareName, shareUrl)
-					pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
-					httpClient.R().SetResult(resData).
-						SetHeader("Content-Type", "application/json").
-						SetHeader("Authorization", conf.Token).
-						SetBody(pushData).
-						Post(addStorageApi)
-					if resData.Code == 200 {
-						fmt.Println(category + " " + shareName + " 添加完成")
-					} else {
-						fmt.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
-					}
+					wg.Add(1)
+					go func(category, shareName, shareUrl string) {
+						defer wg.Done()
+						pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
+						resData := &models.ResData{}
+						httpClient.R().SetResult(resData).
+							SetHeader("Content-Type", "application/json").
+							SetHeader("Authorization", conf.Token).
+							SetBody(pushData).
+							Post(addStorageApi)
+						if resData.Code == 200 {
+							fmt.Println(category + " " + shareName + " 添加完成")
+						} else {
+							fmt.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
+						}
+					}(category, shareName, shareUrl)
 				}
 			}
+			wg.Wait()
 		}
 	} else {
-		//token无效重新获取
+		// token无效重新获取
 		fmt.Println("token无效, 尝试重新获取")
 		loginResData := &models.LoginRes{}
 		httpClient.R().SetResult(loginResData).
