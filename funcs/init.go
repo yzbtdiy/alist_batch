@@ -3,7 +3,6 @@ package funcs
 import (
 	"github.com/yzbtdiy/alist_batch/models"
 
-	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -23,7 +22,7 @@ func GenConfFile(fileName string) {
 
 	res, err := yaml.Marshal(confExample)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	os.WriteFile("./"+fileName, res, 0777)
 }
@@ -48,29 +47,7 @@ func GenResFile(fileName string) {
 
 	res, err := yaml.Marshal(resExample)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	os.WriteFile("./"+fileName, res, 0777)
-}
-
-func Run() {
-	confStat := CheckFile("config.yaml")
-	shareStat := CheckFile("ali_share.yaml")
-	if confStat {
-		if shareStat {
-			Start()
-		} else {
-			fmt.Println("ali_share.yaml文件不存在, 尝试生成")
-			GenResFile("ali_share.yaml")
-		}
-	} else if shareStat {
-		fmt.Println("config.yaml文件不存在, 尝试生成")
-		GenConfFile("config.yaml")
-	} else {
-		fmt.Println("config.yaml不存在, 尝试生成")
-		GenConfFile("config.yaml")
-		fmt.Println("ali_share.yaml文件不存在, 尝试生成")
-		GenResFile("ali_share.yaml")
-	}
-
 }
