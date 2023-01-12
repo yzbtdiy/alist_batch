@@ -40,3 +40,7 @@ func BuildPushData(mountPath string, aliUrl string, config *models.Config) []byt
 	pushJson, _ := json.Marshal(data)
 	return pushJson
 }
+
+func BuildDeleteData(){
+	
+}

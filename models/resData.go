@@ -1,16 +1,6 @@
 package models
 
-type Config struct {
-	Url          string `yaml:"url"`
-	Auth         *Auth  `yaml:"auth"`
-	Token        string `yaml:"token"`
-	RefreshToken string `yaml:"refresh_token"`
-}
-
-type Auth struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-}
+import "time"
 
 type AuthJson struct {
 	Username string `json:"username"`
@@ -55,3 +45,26 @@ type Addition struct {
 	OrderDirection string `json:"order_direction"`
 }
 
+type StorageListData struct {
+	Content []StorageListContent `json:"content"`
+	Total   int       `json:"total"`
+}
+
+type StorageListContent struct {
+	ID              int       `json:"id"`
+	MountPath       string    `json:"mount_path"`
+	Order           int       `json:"order"`
+	Driver          string    `json:"driver"`
+	CacheExpiration int       `json:"cache_expiration"`
+	Status          string    `json:"status"`
+	Addition        string    `json:"addition"`
+	Remark          string    `json:"remark"`
+	Modified        time.Time `json:"modified"`
+	Disabled        bool      `json:"disabled"`
+	OrderBy         string    `json:"order_by"`
+	OrderDirection  string    `json:"order_direction"`
+	ExtractFolder   string    `json:"extract_folder"`
+	WebProxy        bool      `json:"web_proxy"`
+	WebdavPolicy    string    `json:"webdav_policy"`
+	DownProxyURL    string    `json:"down_proxy_url"`
+}

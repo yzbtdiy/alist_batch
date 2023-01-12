@@ -40,6 +40,7 @@ func Start() {
 	loginApi := conf.Url + "/api/auth/login"
 	storageListApi := conf.Url + "/api/admin/storage/list"
 	addStorageApi := conf.Url + "/api/admin/storage/create"
+	delStorageApi := conf.Url + "/api/admin/storage/delete"
 
 	// 将用户名和密码转为json
 	loginData := models.AuthJson{
@@ -48,24 +49,29 @@ func Start() {
 	}
 	authJson, _ := json.Marshal(loginData)
 
-	// 简单检查是否添加 token, 非默认字符串 "ALIST_TOKEN" 或为空
+	// 如果有 -delete flag, 进行删除操作
+	DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
+
+	// 检测 token 是否存在
 	if conf.Token != "ALIST_TOKEN" && conf.Token != "" {
-		resData := HttpGet(storageListApi, conf.Token)
 		// 携带 token 尝试读取storagelist, 若返回 200 则说明 token 有效
-		if resData.Code == 200 {
+		storageListRes := HttpGet(storageListApi, conf.Token)
+		if storageListRes.Code == 200 {
 			shareListData := GetShareList("./ali_share.yaml")
+			// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
 			wg := &sync.WaitGroup{}
+			//  遍历阿里云盘资源名和链接
 			for category, shareList := range shareListData {
-				// log.Println(category)
 				for shareName, shareUrl := range shareList {
-					// log.Println(shareName, shareUrl)
 					wg.Add(1)
 					go func(category, shareName, shareUrl string) {
 						defer wg.Done()
+						// 根据阿里云盘资源名和链接生成添加资源的 json 字符串
 						pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
-						resData = HttpPost(addStorageApi, conf.Token, pushData)
-						// log.Println(resData)
-						if resData.Code == 200 {
+						// 发送请求添加资源
+						pushRes := HttpPost(addStorageApi, conf.Token, pushData)
+						// 返回值为 200 说明添加成功
+						if pushRes.Code == 200 {
 							log.Println(category + " " + shareName + " 添加完成")
 						} else {
 							log.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
@@ -75,11 +81,11 @@ func Start() {
 			}
 			wg.Wait()
 		} else {
-			//token无效重新获取
+			// 若携带 token 尝试访问 storage list 失败, 则尝试更新 token
 			UpdateToken(loginApi, authJson, conf)
 		}
 	} else {
-		//token无效重新获取
+		// 若 token 为 ALIST_TOKEN 或空字符串, 则尝试更新 token
 		UpdateToken(loginApi, authJson, conf)
 	}
 }
