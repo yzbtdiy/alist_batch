@@ -49,14 +49,14 @@ func Start() {
 	}
 	authJson, _ := json.Marshal(loginData)
 
-	// 如果有 -delete flag, 进行删除操作
-	DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
-
 	// 检测 token 是否存在
 	if conf.Token != "ALIST_TOKEN" && conf.Token != "" {
 		// 携带 token 尝试读取storagelist, 若返回 200 则说明 token 有效
 		storageListRes := HttpGet(storageListApi, conf.Token)
 		if storageListRes.Code == 200 {
+			// 如果有 -delete flag, 进行删除操作
+			DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
+			// 读取阿里云盘资源链接列表
 			shareListData := GetShareList("./ali_share.yaml")
 			// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
 			wg := &sync.WaitGroup{}
