@@ -23,6 +23,8 @@
   * 在 ali_share.yaml 文件中添加资源的分类
   * 在 ali_share.yaml 文件分类下级添加 `资源名: 阿里云资源链接` , 链接需要需要包含 folder
   * 修改后运行 alist_batch.exe 即可, 推荐命令行执行, 双击运行不会输出信息
+  * `alist_batch.exe -delete dis` 删除已禁用存储
+  * `alist_batch.exe -delete all` 删除所有添加的存储(慎用)
 
 * 下载源码编译
   * `git clone https://github.com/yzbtdiy/alist_batch.git`
