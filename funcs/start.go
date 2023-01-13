@@ -9,8 +9,10 @@ import (
 )
 
 func Run() {
+	// 检查配置文件和阿里云盘分享链接文件是否存在
 	confStat := CheckFile("config.yaml")
 	shareStat := CheckFile("ali_share.yaml")
+
 	if confStat {
 		if shareStat {
 			Start()
@@ -22,7 +24,7 @@ func Run() {
 		log.Println("config.yaml文件不存在, 尝试生成")
 		GenConfFile("config.yaml")
 	} else {
-		log.Println("config.yaml不存在, 尝试生成")
+		log.Println("config.yaml文件不存在, 尝试生成")
 		GenConfFile("config.yaml")
 		log.Println("ali_share.yaml文件不存在, 尝试生成")
 		GenResFile("ali_share.yaml")
@@ -42,13 +44,6 @@ func Start() {
 	addStorageApi := conf.Url + "/api/admin/storage/create"
 	delStorageApi := conf.Url + "/api/admin/storage/delete"
 
-	// 将用户名和密码转为json
-	loginData := models.AuthJson{
-		Username: conf.Auth.Username,
-		Password: conf.Auth.Password,
-	}
-	authJson, _ := json.Marshal(loginData)
-
 	// 检测 token 是否存在
 	if conf.Token != "ALIST_TOKEN" && conf.Token != "" {
 		// 携带 token 尝试读取storagelist, 若返回 200 则说明 token 有效
@@ -56,37 +51,15 @@ func Start() {
 		if storageListRes.Code == 200 {
 			// 如果有 -delete flag, 进行删除操作
 			DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
-			// 读取阿里云盘资源链接列表
-			shareListData := GetShareList("./ali_share.yaml")
-			// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
-			wg := &sync.WaitGroup{}
-			//  遍历阿里云盘资源名和链接
-			for category, shareList := range shareListData {
-				for shareName, shareUrl := range shareList {
-					wg.Add(1)
-					go func(category, shareName, shareUrl string) {
-						defer wg.Done()
-						// 根据阿里云盘资源名和链接生成添加资源的 json 字符串
-						pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
-						// 发送请求添加资源
-						pushRes := HttpPost(addStorageApi, conf.Token, pushData)
-						// 返回值为 200 说明添加成功
-						if pushRes.Code == 200 {
-							log.Println(category + " " + shareName + " 添加完成")
-						} else {
-							log.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
-						}
-					}(category, shareName, shareUrl)
-				}
-			}
-			wg.Wait()
+			// 发送请求添加阿里云分享链接
+			PushAliShares(addStorageApi, conf)
 		} else {
 			// 若携带 token 尝试访问 storage list 失败, 则尝试更新 token
-			UpdateToken(loginApi, authJson, conf)
+			UpdateToken(loginApi, conf)
 		}
 	} else {
 		// 若 token 为 ALIST_TOKEN 或空字符串, 则尝试更新 token
-		UpdateToken(loginApi, authJson, conf)
+		UpdateToken(loginApi, conf)
 	}
 }
 
@@ -103,8 +76,42 @@ func CheckConf(conf *models.Config) {
 	}
 }
 
+// 读取 ali_share.yaml 文件添加阿里云盘分享链接
+func PushAliShares(addStorageApi string, conf *models.Config) {
+
+	shareListData := GetShareList("./ali_share.yaml")
+	// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
+	wg := &sync.WaitGroup{}
+	// 遍历阿里云盘资源名和链接
+	for category, shareList := range shareListData {
+		for shareName, shareUrl := range shareList {
+			wg.Add(1)
+			go func(category, shareName, shareUrl string) {
+				defer wg.Done()
+				// 根据阿里云盘资源名和链接生成添加资源的 json 字符串
+				pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
+				// 发送请求添加资源
+				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
+				// 返回值为 200 说明添加成功
+				if pushRes.Code == 200 {
+					log.Println(category + " " + shareName + " 添加完成")
+				} else {
+					log.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
+				}
+			}(category, shareName, shareUrl)
+		}
+	}
+	wg.Wait()
+}
+
 // 更新 token
-func UpdateToken(loginApi string, authJson []byte, conf *models.Config) {
+func UpdateToken(loginApi string, conf *models.Config) {
+	loginData := models.AuthJson{
+		Username: conf.Auth.Username,
+		Password: conf.Auth.Password,
+	}
+	authJson, _ := json.Marshal(loginData)
+
 	resData := HttpPost(loginApi, "", authJson)
 	data, _ := json.Marshal(resData.Data)
 	var tokenData models.AuthData

@@ -7,20 +7,14 @@ type AuthJson struct {
 	Password string `json:"password"`
 }
 
-// type LoginRes struct {
-// 	Code    int
-// 	Message string
-// 	Data    *AuthData
-// }
-
-type AuthData struct {
-	Token string
-}
-
 type ResData struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    any    `json:"data"`
+}
+
+type AuthData struct {
+	Token string
 }
 
 type PushData struct {
@@ -47,7 +41,7 @@ type Addition struct {
 
 type StorageListData struct {
 	Content []StorageListContent `json:"content"`
-	Total   int       `json:"total"`
+	Total   int                  `json:"total"`
 }
 
 type StorageListContent struct {

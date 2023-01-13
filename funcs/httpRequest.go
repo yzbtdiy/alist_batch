@@ -10,7 +10,7 @@ import (
 )
 
 // reference: https://golangtutorial.dev/tips/http-post-json-go/
-
+// 封装 post 请求
 func HttpPost(url string, token string, postData []byte) models.ResData {
 	// log.Println("HTTP JSON POST URL:", url)
 	// var jsonData = []byte(postData)
@@ -40,6 +40,7 @@ func HttpPost(url string, token string, postData []byte) models.ResData {
 	return resData
 }
 
+// 封装 get 请求
 func HttpGet(url string, token string) models.ResData {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
