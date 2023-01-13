@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// 生成配置模板文件
 func GenConfFile(fileName string) {
 	confAuth := models.Auth{
 		Username: "USERNAME",
@@ -27,6 +28,7 @@ func GenConfFile(fileName string) {
 	os.WriteFile("./"+fileName, res, 0777)
 }
 
+// 生成阿里云盘分享链接模板文件
 func GenResFile(fileName string) {
 	resTv := models.TvSeries{
 		XiYouJi:      "https://www.aliyundrive.com/s/MmMR3zaoXLf/folder/61d259418d27bae8656f47aca23ee03b40275432",
