@@ -1,10 +1,10 @@
 package funcs
 
 import (
-    "github.com/yzbtdiy/alist_batch/models"
+	"github.com/yzbtdiy/alist_batch/models"
 
-	"os"
 	"fmt"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
@@ -55,7 +55,7 @@ func GetShareList(fileName string) map[string]map[string]string {
 	shareListContent := make(map[string]map[string]string)
 	content, err := os.ReadFile("./" + fileName)
 	if err != nil {
-		fmt.Println("读取阿里分享列表文件出错")
+		fmt.Println("读取分享列表文件出错")
 		fmt.Println(err)
 	}
 	yaml.Unmarshal(content, &shareListContent)

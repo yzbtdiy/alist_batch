@@ -5,36 +5,43 @@ import (
 
 	"encoding/json"
 	"log"
-	"sync"
 )
 
-func Run() {
-	// 检查配置文件和阿里云盘分享链接文件是否存在
-	confStat := CheckFile("config.yaml")
-	shareStat := CheckFile("ali_share.yaml")
+var conf *models.Config
 
-	if confStat {
-		if shareStat {
-			Start()
-		} else {
-			log.Println("ali_share.yaml文件不存在, 尝试生成")
-			GenResFile("ali_share.yaml")
+func Run() {
+	//读取配置文件
+	conf = GetConfig("config.yaml")
+
+	// 检查配置文件和分享链接文件是否存在
+	hasConf := CheckFile("config.yaml")
+	hasAliShare := CheckFile("ali_share.yaml")
+	hasPikShare := CheckFile("pik_share.yaml")
+
+	if hasConf {
+		if conf.Aliyun.Enable {
+			if hasAliShare {
+				Start()
+			} else {
+				log.Println("ali_share.yaml文件不存在, 尝试生成")
+				GenAliShareFile("ali_share.yaml")
+			}
 		}
-	} else if shareStat {
-		log.Println("config.yaml文件不存在, 尝试生成")
-		GenConfFile("config.yaml")
+		if conf.PikPak.Enable {
+			if hasPikShare {
+				Start()
+			} else {
+				log.Println("pik_share.yaml文件不存在, 尝试生成")
+				GenPikShareFile("pik_share.yaml")
+			}
+		}
 	} else {
 		log.Println("config.yaml文件不存在, 尝试生成")
 		GenConfFile("config.yaml")
-		log.Println("ali_share.yaml文件不存在, 尝试生成")
-		GenResFile("ali_share.yaml")
 	}
 }
 
 func Start() {
-	// 读取配置文件
-	conf := GetConfig("config.yaml")
-
 	// 检查配置文件是否修改必要字段
 	CheckConf(conf)
 
@@ -52,7 +59,13 @@ func Start() {
 			// 如果有 -delete flag, 进行删除操作
 			DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
 			// 发送请求添加阿里云分享链接
-			PushAliShares(addStorageApi, conf)
+			if conf.Aliyun.Enable {
+				PushAliShares(addStorageApi, conf)
+			}
+			if conf.PikPak.Enable {
+				PushPikPakShares(addStorageApi, conf)
+
+			}
 		} else {
 			// 若携带 token 尝试访问 storage list 失败, 则尝试更新 token
 			UpdateToken(loginApi, conf)
@@ -61,6 +74,7 @@ func Start() {
 		// 若 token 为 ALIST_TOKEN 或空字符串, 则尝试更新 token
 		UpdateToken(loginApi, conf)
 	}
+
 }
 
 // 检查配置文件是否修改
@@ -71,37 +85,12 @@ func CheckConf(conf *models.Config) {
 	if (conf.Auth.Username == "USERNAME" || conf.Auth.Password == "PASSWORD") && (conf.Token == "ALIST_TOKEN" || conf.Token == "") {
 		panic("token和用户密码至少要配置一项, 请检查配置文件")
 	}
-	if conf.RefreshToken == "ALI_YUNPAN_REFRESH_TOKEN" {
-		panic("refresh_token 未配置, 请检查配置文件")
+	if conf.Aliyun.Enable && conf.Aliyun.RefreshToken == "ALI_YUNPAN_REFRESH_TOKEN" {
+		panic("添加阿里云盘链接需要 refresh_token, 请检查配置文件")
 	}
-}
-
-// 读取 ali_share.yaml 文件添加阿里云盘分享链接
-func PushAliShares(addStorageApi string, conf *models.Config) {
-
-	shareListData := GetShareList("./ali_share.yaml")
-	// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
-	wg := &sync.WaitGroup{}
-	// 遍历阿里云盘资源名和链接
-	for category, shareList := range shareListData {
-		for shareName, shareUrl := range shareList {
-			wg.Add(1)
-			go func(category, shareName, shareUrl string) {
-				defer wg.Done()
-				// 根据阿里云盘资源名和链接生成添加资源的 json 字符串
-				pushData := BuildPushData(`/`+category+`/`+shareName, shareUrl, conf)
-				// 发送请求添加资源
-				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
-				// 返回值为 200 说明添加成功
-				if pushRes.Code == 200 {
-					log.Println(category + " " + shareName + " 添加完成")
-				} else {
-					log.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
-				}
-			}(category, shareName, shareUrl)
-		}
+	if conf.PikPak.Enable && (conf.PikPak.Username == "PIKPAK_EMAIL" || conf.PikPak.Password == "PIKPAK_PASSWORD") {
+		panic("添加 PikPak 链接需要添加用户和密码, 请检查配置文件")
 	}
-	wg.Wait()
 }
 
 // 更新 token

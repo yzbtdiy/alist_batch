@@ -30,11 +30,21 @@ type PushData struct {
 	Addition        string `json:"addition"`
 }
 
-type Addition struct {
+type AliAddition struct {
 	RefreshToken   string `json:"refresh_token"`
 	ShareId        string `json:"share_id"`
 	SharePwd       string `json:"share_pwd"`
 	RootFolderId   string `json:"root_folder_id"`
+	OrderBy        string `json:"order_by"`
+	OrderDirection string `json:"order_direction"`
+}
+
+type PikPakAddition struct {
+	RootFolderId   string `json:"root_folder_id"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+	ShareId        string `json:"share_id"`
+	SharePwd       string `json:"share_pwd"`
 	OrderBy        string `json:"order_by"`
 	OrderDirection string `json:"order_direction"`
 }

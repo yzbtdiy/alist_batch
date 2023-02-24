@@ -1,6 +1,6 @@
 package models
 
-type ShareList struct {
+type AliShareList struct {
 	TvSeries *TvSeries `yaml:"电视剧"`
 	Movies   *Movies   `yaml:"电影"`
 }
