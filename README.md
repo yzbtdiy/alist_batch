@@ -16,12 +16,15 @@
 [Bilibili视频介绍](https://www.bilibili.com/video/BV1uP411K747)
 
 * Golang 编译的二进制文件可直接运行(alist_batch.exe)
-  * 初次运行会自动生成配置模板和阿里云资源模板
+  * 初次运行会自动生成配置模板 config.yaml
   * 在 config.yaml 文件中添加 alist 地址, url 结尾不需要 /
   * 在 config.yaml 文件中 username 和 password 字段后添加 alist 登录账号和密码
-  * 在 config.yaml 文件中 refresh_token 字段后添加阿里云盘的 refresh_token
-  * 在 ali_share.yaml 文件中添加资源的分类
-  * 在 ali_share.yaml 文件分类下级添加 `资源名: 阿里云资源链接` , 链接需要需要包含 folder
+  * 添加阿里云盘分享链接请设置aliyun下的enable为true, 添加pikpak分享链接请设置pikpak下的enable为true
+    * 添加阿里云盘分享 aliyun 下 refresh_token 字段后添加阿里云盘的 refresh_token
+    * 添加pikpak分享 在pikpak 下的 username 和 password 字段后添加pikpak用户和密码
+  * 在 ali_share.yaml 或者 pik_share.yaml 文件中添加资源的分类
+  * 在 ali_share.yaml 或 pik_share.yaml 文件分类下级添加 `资源名: 分享资源链接`
+    * 阿里云盘分享链接需要包含 folder 后的 id, pikpak 分享链接可以不添加 root_folder_id
   * 修改后运行 alist_batch.exe 即可, 推荐命令行执行, 双击运行不会输出信息
   * `alist_batch.exe -delete dis` 删除已禁用存储
   * `alist_batch.exe -delete all` 删除所有添加的存储(慎用)
@@ -38,4 +41,5 @@
 ### other
 
 * alist 的登录用户和密码仅用于自动获取 cookie, 手动获取有效cookie填入config.yaml可以不用添加用户和密码
-* 目前只实现了不带提取码的阿里云盘链接批量添加
+* 目前实现了阿里云盘分享链接和 PikPak 分享链接的批量添加
+* 此工具只是批量挂载工具, 挂载后视频不能播放请关注alist的github issues
