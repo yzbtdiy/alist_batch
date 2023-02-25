@@ -1,12 +1,12 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/yzbtdiy/alist_batch/models"
 )
 
 // reference: https://golangtutorial.dev/tips/http-post-json-go/

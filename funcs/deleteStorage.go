@@ -1,13 +1,13 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"encoding/json"
 	"flag"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/yzbtdiy/alist_batch/models"
 )
 
 var deleteFlag = flag.String("delete", "",

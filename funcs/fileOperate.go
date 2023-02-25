@@ -1,12 +1,12 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/yzbtdiy/alist_batch/models"
 )
 
 // 判断文件是否存在

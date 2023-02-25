@@ -1,10 +1,10 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"encoding/json"
 	"log"
+
+	"github.com/yzbtdiy/alist_batch/models"
 )
 
 var conf *models.Config

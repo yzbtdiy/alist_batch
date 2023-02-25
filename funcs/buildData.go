@@ -1,29 +1,42 @@
 package funcs
 
 import (
+	"encoding/json"
 	"log"
 	"net/url"
 	"strings"
 
 	"github.com/yzbtdiy/alist_batch/models"
-
-	"encoding/json"
-	"regexp"
+	// "regexp"
 )
 
 // 生成添加阿里云盘挂载json字符串
 func BuildAliPushData(mountPath string, aliUrl string, config *models.Config) []byte {
-	reId, _ := regexp.Compile("https://www.aliyundrive.com/s/(.*)/folder")
-	reFolder, _ := regexp.Compile("/folder/(.*)$")
-	reShareId := reId.FindStringSubmatch(aliUrl)
-	reShareFolder := reFolder.FindStringSubmatch(aliUrl)
-	shareId := reShareId[len(reShareId)-1]
-	shareFolder := reShareFolder[len(reShareFolder)-1]
+	// reId, _ := regexp.Compile("https://www.aliyundrive.com/s/(.*)/folder")
+	// reFolder, _ := regexp.Compile("/folder/(.*)$")
+	// reShareId := reId.FindStringSubmatch(aliUrl)
+	// reShareFolder := reFolder.FindStringSubmatch(aliUrl)
+	// shareId := reShareId[len(reShareId)-1]
+	// shareFolder := reShareFolder[len(reShareFolder)-1]
+	params, err := url.Parse(aliUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var shareId, shareFolder, sharePwd string
+	if params.Query().Has("pwd") {
+		sharePwd = params.Query()["pwd"][0]
+	} else {
+		sharePwd = ""
+	}
+	pathArray := strings.Split(params.Path, "/")
+	shareId = pathArray[2]
+	shareFolder = pathArray[4]
 
 	addition := new(models.AliAddition)
 	addition.RefreshToken = config.Aliyun.RefreshToken
 	addition.ShareId = shareId
-	addition.SharePwd = ""
+	addition.SharePwd = sharePwd
 	addition.RootFolderId = shareFolder
 	addition.OrderBy = ""
 	addition.OrderDirection = ""

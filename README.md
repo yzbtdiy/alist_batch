@@ -22,6 +22,7 @@
   * 添加阿里云盘分享链接请设置aliyun下的enable为true, 添加pikpak分享链接请设置pikpak下的enable为true
     * 添加阿里云盘分享 aliyun 下 refresh_token 字段后添加阿里云盘的 refresh_token
     * 添加pikpak分享 在pikpak 下的 username 和 password 字段后添加pikpak用户和密码
+    * 支持有提取码的分享链接, 在链接结尾添加 `?pwd=提取码` 即可
   * 在 ali_share.yaml 或者 pik_share.yaml 文件中添加资源的分类
   * 在 ali_share.yaml 或 pik_share.yaml 文件分类下级添加 `资源名: 分享资源链接`
     * 阿里云盘分享链接需要包含 folder 后的 id, pikpak 分享链接可以不添加 root_folder_id

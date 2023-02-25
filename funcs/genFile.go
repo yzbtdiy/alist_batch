@@ -1,11 +1,11 @@
 package funcs
 
 import (
-	"github.com/yzbtdiy/alist_batch/models"
-
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/yzbtdiy/alist_batch/models"
 )
 
 // 生成配置模板文件
