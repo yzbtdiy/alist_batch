@@ -108,3 +108,14 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 	pushJson, _ := json.Marshal(data)
 	return pushJson
 }
+
+func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshToken string) []byte {
+	var oldAddition models.AliAddition
+	json.Unmarshal([]byte(aliShareData.Addition), &oldAddition)
+	oldAddition.RefreshToken = refreshToken
+	aliShareData.Status = "work"
+	newAddition, _ := json.Marshal(oldAddition)
+	aliShareData.Addition = string(newAddition)
+	pushJson, _ := json.Marshal(aliShareData)
+	return pushJson
+}

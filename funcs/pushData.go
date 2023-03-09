@@ -2,6 +2,7 @@ package funcs
 
 import (
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/yzbtdiy/alist_batch/models"
@@ -25,8 +26,13 @@ func PushAliShares(addStorageApi string, conf *models.Config) {
 				// 返回值为 200 说明添加成功
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")
-				} else {
-					log.Println(category + " " + shareName + " 添加失败, 请检查是否重复添加")
+				} else if pushRes.Code == 500 {
+					if strings.Split(pushRes.Message, ":")[2] == " failed to refresh token" {
+						log.Println("refresh token 无效, 已尝试添加 " + category + " " + shareName)
+					} else {
+						log.Println("ssss" + strings.Split(pushRes.Message, ":")[2] + "sss")
+						log.Println(category + " " + shareName + "添加失败, 请检查是否重复添加")
+					}
 				}
 			}(category, shareName, shareUrl)
 		}

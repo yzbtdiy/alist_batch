@@ -6,9 +6,8 @@ token: ALIST_TOKEN
 aliyun:
     enable: true
     refresh_token: ALI_YUNPAN_REFRESH_TOKEN
+    update_token: true
 pikpak:
     enable: true
     username: PIKPAK_EMAIL
     password: PIKPAK_PASSWORD
-
-

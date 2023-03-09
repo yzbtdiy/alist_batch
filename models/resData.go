@@ -55,7 +55,7 @@ type StorageListData struct {
 }
 
 type StorageListContent struct {
-	ID              int       `json:"id"`
+	Id              int       `json:"id"`
 	MountPath       string    `json:"mount_path"`
 	Order           int       `json:"order"`
 	Driver          string    `json:"driver"`

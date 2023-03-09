@@ -2,8 +2,10 @@ package funcs
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 
+	"github.com/yzbtdiy/alist_batch/flags"
 	"github.com/yzbtdiy/alist_batch/models"
 )
 
@@ -50,21 +52,27 @@ func Start() {
 	storageListApi := conf.Url + "/api/admin/storage/list"
 	addStorageApi := conf.Url + "/api/admin/storage/create"
 	delStorageApi := conf.Url + "/api/admin/storage/delete"
+	updateStorageApi := conf.Url + "/api/admin/storage/update"
 
 	// 检测 token 是否存在
 	if conf.Token != "ALIST_TOKEN" && conf.Token != "" {
 		// 携带 token 尝试读取storagelist, 若返回 200 则说明 token 有效
 		storageListRes := HttpGet(storageListApi, conf.Token)
 		if storageListRes.Code == 200 {
-			// 如果有 -delete flag, 进行删除操作
-			DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
+			flag.Parse()
+			// 根据 flag 确定执行的操作 
+			if *flags.UpdateFlag != "" {
+				UpdateAliStorage(storageListApi, updateStorageApi, conf)
+			}
+			if *flags.DeleteFlag != "" {
+				DeleteStorageIfHaveFlag(storageListApi, delStorageApi, conf.Token)
+			}
 			// 发送请求添加阿里云分享链接
 			if conf.Aliyun.Enable {
 				PushAliShares(addStorageApi, conf)
 			}
 			if conf.PikPak.Enable {
 				PushPikPakShares(addStorageApi, conf)
-
 			}
 		} else {
 			// 若携带 token 尝试访问 storage list 失败, 则尝试更新 token
