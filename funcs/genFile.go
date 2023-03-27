@@ -21,17 +21,33 @@ func GenConfFile(fileName string) {
 	}
 
 	confPikPak := models.PikPak{
-		Enable:   true,
+		Enable:   false,
 		Username: "PIKPAK_EMAIL",
 		Password: "PIKPAK_PASSWORD",
 	}
 
+	var confTenantList = make([]models.TenantList, 1)
+
+	confTenantList[0] = models.TenantList{
+		Id:           1,
+		ClientId:     "CLIENT_ID",
+		ClientSecret: "CLIENT_SECRET",
+		TenantId:     "TENANT_ID",
+	}
+
+	confOnedriveApp := models.OneDriveApp{
+		Enable: false,
+		Region: "global",
+		Tenant: confTenantList,
+	}
+
 	confExample := models.Config{
-		Url:    "ALIST_URL",
-		Auth:   &confAuth,
-		Token:  "ALIST_TOKEN",
-		Aliyun: &confAliyun,
-		PikPak: &confPikPak,
+		Url:         "ALIST_URL",
+		Auth:        &confAuth,
+		Token:       "ALIST_TOKEN",
+		Aliyun:      &confAliyun,
+		PikPak:      &confPikPak,
+		OneDriveApp: &confOnedriveApp,
 	}
 
 	res, err := yaml.Marshal(confExample)
@@ -72,6 +88,21 @@ func GenPikShareFile(fileName string) {
 	subList["阿飞正传"] = "https://mypikpak.com/s/VNP2d8tHvt4TVPKPacCUYRaXo1/VNP2G0YUcYmtVw025fNVqgDdo1"
 	shareList["电影"] = subList
 	res, err := yaml.Marshal(shareList)
+	if err != nil {
+		panic(err)
+	}
+	os.WriteFile("./"+fileName, res, 0777)
+}
+
+// 生成 PikPak 分享链接模板文件
+func GenOnedriveAppFile(fileName string) {
+	oneDriveAppList := make(map[string][3]string)
+	var emailsArr [3]string
+	emailsArr[0] = "user1@xxx.onmicrosoft.com"
+	emailsArr[1] = "user2@xxx.onmicrosoft.com:/folder1"
+	emailsArr[2] = "user2@xxx.onmicrosoft.com:/folder2"
+	oneDriveAppList["tenant1"] = emailsArr
+	res, err := yaml.Marshal(oneDriveAppList)
 	if err != nil {
 		panic(err)
 	}

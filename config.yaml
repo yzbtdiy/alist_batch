@@ -7,6 +7,14 @@ aliyun:
     enable: true
     refresh_token: ALI_YUNPAN_REFRESH_TOKEN
 pikpak:
-    enable: true
+    enable: false
     username: PIKPAK_EMAIL
     password: PIKPAK_PASSWORD
+onedrive_app:
+    enable: false
+    region: global
+    tenants:
+        - id: 1
+          client_id: CLIENT_ID
+          client_secret: CLIENT_SECRET
+          tenant_id: TENANT_ID

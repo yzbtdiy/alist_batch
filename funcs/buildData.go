@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/yzbtdiy/alist_batch/models"
-	// "regexp"
 )
 
 // 生成添加阿里云盘挂载json字符串
@@ -52,7 +53,10 @@ func BuildAliPushData(mountPath string, aliUrl string, config *models.Config) []
 		WebProxy:        false,
 		WebdavPolicy:    "302_redirect",
 		DownProxyUrl:    "",
+		OrderBy:         "",
+		OrderDirection:  "",
 		ExtractFolder:   "",
+		EnableSign:      false,
 		Driver:          "AliyundriveShare",
 		Addition:        additionData,
 	}
@@ -101,7 +105,10 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 		WebProxy:        false,
 		WebdavPolicy:    "302_redirect",
 		DownProxyUrl:    "",
+		OrderBy:         "",
+		OrderDirection:  "",
 		ExtractFolder:   "",
+		EnableSign:      false,
 		Driver:          "PikPakShare",
 		Addition:        additionData,
 	}
@@ -109,6 +116,7 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 	return pushJson
 }
 
+// 生成添加阿里云盘分享批量更新 RefreshToken json字符串
 func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshToken string) []byte {
 	var oldAddition models.AliAddition
 	json.Unmarshal([]byte(aliShareData.Addition), &oldAddition)
@@ -117,5 +125,50 @@ func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshT
 	newAddition, _ := json.Marshal(oldAddition)
 	aliShareData.Addition = string(newAddition)
 	pushJson, _ := json.Marshal(aliShareData)
+	return pushJson
+}
+
+func BuildOnedriverApp(tenant string, emailInfo string, config *models.Config) []byte {
+	reId := regexp.MustCompile("[0-9]+")
+	tid, _ := strconv.Atoi(reId.FindAllString(tenant, -1)[0])
+
+	emailPath := strings.Split(emailInfo, ":")
+	var email, folderPath string
+	if len(emailPath) == 2 {
+		email = strings.Split(emailInfo, ":")[0]
+		folderPath = strings.Split(emailInfo, ":")[1]
+	} else {
+		email = strings.Split(emailInfo, ":")[0]
+		folderPath = "/"
+	}
+
+	addition := models.OnedriveAppAddition{
+		RootFolderPath: folderPath,
+		Region:         config.OneDriveApp.Region,
+		ClientId:       config.OneDriveApp.Tenant[tid-1].ClientId,
+		ClientSecret:   config.OneDriveApp.Tenant[tid-1].ClientSecret,
+		TenantId:       config.OneDriveApp.Tenant[tid-1].TenantId,
+		Email:          email,
+		ChunkSize:      5,
+	}
+	additionJson, _ := json.Marshal(addition)
+	additionData := string(additionJson)
+
+	data := models.PushData{
+		MountPath:       "/" + email + "/" + folderPath,
+		Order:           0,
+		Remark:          "",
+		CacheExpiration: 30,
+		WebProxy:        false,
+		WebdavPolicy:    "302_redirect",
+		DownProxyUrl:    "",
+		OrderBy:         "",
+		OrderDirection:  "",
+		ExtractFolder:   "",
+		EnableSign:      false,
+		Driver:          "OnedriveAPP",
+		Addition:        additionData,
+	}
+	pushJson, _ := json.Marshal(data)
 	return pushJson
 }

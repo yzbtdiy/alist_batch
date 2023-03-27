@@ -60,3 +60,25 @@ func PushPikPakShares(addStorageApi string, conf *models.Config) {
 	}
 	wg.Wait()
 }
+
+// 读取 pik_share.yaml 文件添加 PikPak 分享链接
+func PushOnedriveApp(addStorageApi string, conf *models.Config) {
+	onedriveAppList := GetOnedriveAppList("./onedrive_app.yaml")
+	wg := &sync.WaitGroup{}
+	for tenant, emails := range onedriveAppList {
+		for _, emailInfo := range emails {
+			wg.Add(1)
+			go func(tenant, emailInfo string) {
+				defer wg.Done()
+				pushData := BuildOnedriverApp(tenant, emailInfo, conf)
+				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
+				if pushRes.Code == 200 {
+					log.Println(emailInfo + " 添加完成")
+				} else {
+					log.Println(emailInfo + "添加失败, 请检查是否重复添加")
+				}
+			}(tenant, emailInfo)
+		}
+	}
+	wg.Wait()
+}

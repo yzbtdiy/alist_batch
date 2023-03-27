@@ -50,9 +50,21 @@ func ModConfig(fileName string, oldConf *models.Config, token string) {
 	os.WriteFile("./"+fileName, newConf, 0o777)
 }
 
-// 读取 ali_share.yaml 文件
+// 读取 ali_share.yaml 和 pik_share.yml 文件
 func GetShareList(fileName string) map[string]map[string]string {
 	shareListContent := make(map[string]map[string]string)
+	content, err := os.ReadFile("./" + fileName)
+	if err != nil {
+		fmt.Println("读取分享列表文件出错")
+		fmt.Println(err)
+	}
+	yaml.Unmarshal(content, &shareListContent)
+	return shareListContent
+}
+
+// 读取 onedrive_app.yaml 文件
+func GetOnedriveAppList(fileName string) map[string][]string {
+	shareListContent := make(map[string][]string)
 	content, err := os.ReadFile("./" + fileName)
 	if err != nil {
 		fmt.Println("读取分享列表文件出错")

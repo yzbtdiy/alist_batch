@@ -1,0 +1,4 @@
+tenant1:
+    - user1@xxx.onmicrosoft.com
+    - user2@xxx.onmicrosoft.com:/folder1
+    - user2@xxx.onmicrosoft.com:/folder2

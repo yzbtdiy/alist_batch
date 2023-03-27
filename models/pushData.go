@@ -25,7 +25,10 @@ type PushData struct {
 	WebProxy        bool   `json:"web_proxy"`
 	WebdavPolicy    string `json:"webdav_policy"`
 	DownProxyUrl    string `json:"down_proxy_url"`
+	OrderBy         string `json:"order_by"`
+	OrderDirection  string `json:"order_direction"`
 	ExtractFolder   string `json:"extract_folder"`
+	EnableSign      bool   `json:"enable_sign"`
 	Driver          string `json:"driver"`
 	Addition        string `json:"addition"`
 }
@@ -47,6 +50,16 @@ type PikPakAddition struct {
 	SharePwd       string `json:"share_pwd"`
 	OrderBy        string `json:"order_by"`
 	OrderDirection string `json:"order_direction"`
+}
+
+type OnedriveAppAddition struct {
+	RootFolderPath string `json:"root_folder_path"`
+	Region         string `json:"region"`
+	ClientId       string `json:"client_id"`
+	ClientSecret   string `json:"client_secret"`
+	TenantId       string `json:"tenant_id"`
+	Email          string `json:"email"`
+	ChunkSize      int    `json:"chunk_size"`
 }
 
 type StorageListData struct {
