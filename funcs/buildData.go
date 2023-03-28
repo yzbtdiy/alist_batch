@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -128,17 +127,17 @@ func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshT
 	return pushJson
 }
 
-func BuildOnedriverApp(tenant string, emailInfo string, config *models.Config) []byte {
-	reId := regexp.MustCompile("[0-9]+")
-	tid, _ := strconv.Atoi(reId.FindAllString(tenant, -1)[0])
-
-	emailPath := strings.Split(emailInfo, ":")
+func BuildOnedriverApp(mountPath string, emailInfo string, config *models.Config) []byte {
+	params := strings.Split(emailInfo, ":")
+	var tid int
 	var email, folderPath string
-	if len(emailPath) == 2 {
-		email = strings.Split(emailInfo, ":")[0]
-		folderPath = strings.Split(emailInfo, ":")[1]
-	} else {
-		email = strings.Split(emailInfo, ":")[0]
+	if len(params) == 3 {
+		tid, _ = strconv.Atoi(params[0])
+		email = strings.Split(emailInfo, ":")[1]
+		folderPath = strings.Split(emailInfo, ":")[2]
+	} else if len(params) == 2 {
+		tid, _ = strconv.Atoi(params[0])
+		email = strings.Split(emailInfo, ":")[1]
 		folderPath = "/"
 	}
 
@@ -155,7 +154,7 @@ func BuildOnedriverApp(tenant string, emailInfo string, config *models.Config) [
 	additionData := string(additionJson)
 
 	data := models.PushData{
-		MountPath:       "/" + email + "/" + folderPath,
+		MountPath:       mountPath,
 		Order:           0,
 		Remark:          "",
 		CacheExpiration: 30,

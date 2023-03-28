@@ -96,12 +96,12 @@ func GenPikShareFile(fileName string) {
 
 // 生成 PikPak 分享链接模板文件
 func GenOnedriveAppFile(fileName string) {
-	oneDriveAppList := make(map[string][3]string)
-	var emailsArr [3]string
-	emailsArr[0] = "user1@xxx.onmicrosoft.com"
-	emailsArr[1] = "user2@xxx.onmicrosoft.com:/folder1"
-	emailsArr[2] = "user2@xxx.onmicrosoft.com:/folder2"
-	oneDriveAppList["tenant1"] = emailsArr
+	oneDriveAppList := make(map[string]map[string]string)
+	subList := make(map[string]string)
+	subList["挂载1"] = "1:user1@xxx.onmicrosoft.com"
+	subList["挂载2"] = "1:user2@xxx.onmicrosoft.com:/folder1"
+	subList["挂载3"] = "1:user2@xxx.onmicrosoft.com:/folder2"
+	oneDriveAppList["分类1"] = subList
 	res, err := yaml.Marshal(oneDriveAppList)
 	if err != nil {
 		panic(err)
