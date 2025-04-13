@@ -40,8 +40,6 @@ type AliAddition struct {
 	RootFolderId   string `json:"root_folder_id"`
 	OrderBy        string `json:"order_by"`
 	OrderDirection string `json:"order_direction"`
- Platform              string `json:"platform"`
- UseTranscodingAddress bool `json:"use_transcoding_address"` 
 }
 
 type PikPakAddition struct {
@@ -52,6 +50,8 @@ type PikPakAddition struct {
 	SharePwd       string `json:"share_pwd"`
 	OrderBy        string `json:"order_by"`
 	OrderDirection string `json:"order_direction"`
+ Platform              string `json:"platform"`
+ UseTranscodingAddress bool `json:"use_transcoding_address"` 
 }
 
 type OnedriveAppAddition struct {
