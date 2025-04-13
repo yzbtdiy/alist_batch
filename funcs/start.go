@@ -107,9 +107,6 @@ func CheckConf(conf *models.Config) {
 	if conf.Aliyun.Enable && conf.Aliyun.RefreshToken == "ALI_YUNPAN_REFRESH_TOKEN" {
 		panic("添加阿里云盘链接需要 refresh_token, 请检查配置文件")
 	}
-	if conf.PikPak.Enable && (conf.PikPak.Username == "PIKPAK_EMAIL" || conf.PikPak.Password == "PIKPAK_PASSWORD") {
-		panic("添加 PikPak 链接需要添加用户和密码, 请检查配置文件")
-	}
 	if conf.OneDriveApp.Enable && (conf.OneDriveApp.Tenant[0].ClientId == "CLIENT_ID" || conf.OneDriveApp.Tenant[0].ClientSecret == "CLIENT_SECRET" || conf.OneDriveApp.Tenant[0].TenantId == "TENANT_ID") {
 		panic("添加 OnedriveApp 需要添加 client_id, client_secret 和 tenant_id, 请检查配置文件")
 	}
