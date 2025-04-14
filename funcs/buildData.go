@@ -86,12 +86,12 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 
 	addition := models.PikPakAddition{
 		RootFolderId:   shareFolder,
-		Username:       config.PikPak.Username,
-		Password:       config.PikPak.Password,
 		ShareId:        shareId,
 		SharePwd:       sharePwd,
 		OrderBy:        "",
 		OrderDirection: "",
+  Platform:         "android",
+		UseTranscodingAddress: true,
 	}
 	additionJson, _ := json.Marshal(addition)
 	additionData := string(additionJson)
