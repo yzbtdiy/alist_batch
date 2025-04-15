@@ -2,21 +2,25 @@ package models
 
 import "time"
 
+// 登录认证请求体
 type AuthJson struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
+// 通用响应结构体
 type ResData struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    any    `json:"data"`
 }
 
+// 登录响应数据
 type AuthData struct {
 	Token string
 }
 
+// 挂载请求体
 type PushData struct {
 	MountPath       string `json:"mount_path"`
 	Order           int    `json:"order"`
@@ -33,6 +37,7 @@ type PushData struct {
 	Addition        string `json:"addition"`
 }
 
+// 阿里云盘挂载附加信息
 type AliAddition struct {
 	RefreshToken   string `json:"refresh_token"`
 	ShareId        string `json:"share_id"`
@@ -42,18 +47,20 @@ type AliAddition struct {
 	OrderDirection string `json:"order_direction"`
 }
 
+// PikPak 挂载附加信息
 type PikPakAddition struct {
-	RootFolderId   string `json:"root_folder_id"`
-	Username       string `json:"username"`
-	Password       string `json:"password"`
-	ShareId        string `json:"share_id"`
-	SharePwd       string `json:"share_pwd"`
-	OrderBy        string `json:"order_by"`
-	OrderDirection string `json:"order_direction"`
- Platform              string `json:"platform"`
- UseTranscodingAddress bool `json:"use_transcoding_address"` 
+	RootFolderId          string `json:"root_folder_id"`
+	Username              string `json:"username"`
+	Password              string `json:"password"`
+	ShareId               string `json:"share_id"`
+	SharePwd              string `json:"share_pwd"`
+	OrderBy               string `json:"order_by"`
+	OrderDirection        string `json:"order_direction"`
+	Platform              string `json:"platform"`
+	UseTranscodingAddress bool   `json:"use_transcoding_address"`
 }
 
+// Onedrive APP 挂载附加信息
 type OnedriveAppAddition struct {
 	RootFolderPath string `json:"root_folder_path"`
 	Region         string `json:"region"`
@@ -64,11 +71,13 @@ type OnedriveAppAddition struct {
 	ChunkSize      int    `json:"chunk_size"`
 }
 
+// 存储列表响应体
 type StorageListData struct {
 	Content []StorageListContent `json:"content"`
 	Total   int                  `json:"total"`
 }
 
+// 存储项详细信息
 type StorageListContent struct {
 	Id              int       `json:"id"`
 	MountPath       string    `json:"mount_path"`

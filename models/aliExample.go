@@ -1,5 +1,6 @@
 package models
 
+// 阿里云盘分享示例结构体
 type AliShareList struct {
 	TvSeries *TvSeries `yaml:"电视剧"`
 	Movies   *Movies   `yaml:"电影"`

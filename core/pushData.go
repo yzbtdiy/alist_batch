@@ -1,29 +1,24 @@
-package funcs
+package core
 
 import (
 	"log"
 	"strings"
 	"sync"
 
-	"github.com/yzbtdiy/alist_batch/models"
+	"github.com/yzbtdiy/alist_batch/utils"
 )
 
-// 读取 ali_share.yaml 文件添加阿里云盘分享链接
-func PushAliShares(addStorageApi string, conf *models.Config) {
-	shareListData := GetShareList("./ali_share.yaml")
-	// 使用 gorouting, 感谢 nzlov: https://github.com/nzlov
+// 批量添加阿里云盘分享链接
+func (a *AlistBatch) PushAliShares() {
+	shareListData := utils.GetShareList("./ali_share.yaml")
 	wg := &sync.WaitGroup{}
-	// 遍历阿里云盘资源名和链接
 	for category, shareList := range shareListData {
 		for shareName, shareUrl := range shareList {
 			wg.Add(1)
 			go func(category, shareName, shareUrl string) {
 				defer wg.Done()
-				// 根据阿里云盘资源名和链接生成添加资源的 json 字符串
-				pushData := BuildAliPushData(`/`+category+`/`+shareName, shareUrl, conf)
-				// 发送请求添加资源
-				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
-				// 返回值为 200 说明添加成功
+				pushData := a.BuildAliPushData(`/`+category+`/`+shareName, shareUrl)
+				pushRes := a.client.Post(a.addStorageApi, pushData)
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")
 				} else if pushRes.Code == 500 {
@@ -39,17 +34,17 @@ func PushAliShares(addStorageApi string, conf *models.Config) {
 	wg.Wait()
 }
 
-// 读取 pik_share.yaml 文件添加 PikPak 分享链接
-func PushPikPakShares(addStorageApi string, conf *models.Config) {
-	shareListData := GetShareList("./pik_share.yaml")
+// 批量添加 PikPak 分享链接
+func (a *AlistBatch) PushPikPakShares() {
+	shareListData := utils.GetShareList("./pik_share.yaml")
 	wg := &sync.WaitGroup{}
 	for category, shareList := range shareListData {
 		for shareName, shareUrl := range shareList {
 			wg.Add(1)
 			go func(category, shareName, shareUrl string) {
 				defer wg.Done()
-				pushData := BuildPikPakData(`/`+category+`/`+shareName, shareUrl, conf)
-				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
+				pushData := a.BuildPikPakData(`/`+category+`/`+shareName, shareUrl)
+				pushRes := a.client.Post(a.addStorageApi, pushData)
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")
 				} else {
@@ -61,17 +56,17 @@ func PushPikPakShares(addStorageApi string, conf *models.Config) {
 	wg.Wait()
 }
 
-// 读取 pik_share.yaml 文件添加 PikPak 分享链接
-func PushOnedriveApp(addStorageApi string, conf *models.Config) {
-	onedriveAppList := GetShareList("./onedrive_app.yaml")
+// 批量添加 Onedrive APP 分享链接
+func (a *AlistBatch) PushOnedriveApp() {
+	onedriveAppList := utils.GetShareList("./onedrive_app.yaml")
 	wg := &sync.WaitGroup{}
 	for category, shareList := range onedriveAppList {
 		for shareName, shareUrl := range shareList {
 			wg.Add(1)
 			go func(category, shareName, shareUrl string) {
 				defer wg.Done()
-				pushData := BuildOnedriverApp(`/`+category+`/`+shareName, shareUrl, conf)
-				pushRes := HttpPost(addStorageApi, conf.Token, pushData)
+				pushData := a.BuildOnedriverApp(`/`+category+`/`+shareName, shareUrl)
+				pushRes := a.client.Post(a.addStorageApi, pushData)
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")
 				} else {

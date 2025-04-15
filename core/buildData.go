@@ -1,4 +1,4 @@
-package funcs
+package core
 
 import (
 	"encoding/json"
@@ -10,14 +10,8 @@ import (
 	"github.com/yzbtdiy/alist_batch/models"
 )
 
-// 生成添加阿里云盘挂载json字符串
-func BuildAliPushData(mountPath string, aliUrl string, config *models.Config) []byte {
-	// reId, _ := regexp.Compile("https://www.aliyundrive.com/s/(.*)/folder")
-	// reFolder, _ := regexp.Compile("/folder/(.*)$")
-	// reShareId := reId.FindStringSubmatch(aliUrl)
-	// reShareFolder := reFolder.FindStringSubmatch(aliUrl)
-	// shareId := reShareId[len(reShareId)-1]
-	// shareFolder := reShareFolder[len(reShareFolder)-1]
+// 构建阿里云盘挂载数据
+func (a *AlistBatch) BuildAliPushData(mountPath string, aliUrl string) []byte {
 	params, err := url.Parse(aliUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +28,7 @@ func BuildAliPushData(mountPath string, aliUrl string, config *models.Config) []
 	shareFolder = pathArray[4]
 
 	addition := new(models.AliAddition)
-	addition.RefreshToken = config.Aliyun.RefreshToken
+	addition.RefreshToken = a.config.Aliyun.RefreshToken
 	addition.ShareId = shareId
 	addition.SharePwd = sharePwd
 	addition.RootFolderId = shareFolder
@@ -63,8 +57,8 @@ func BuildAliPushData(mountPath string, aliUrl string, config *models.Config) []
 	return pushJson
 }
 
-// 生成添加pikpak分享链接挂载json字符串
-func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) []byte {
+// 构建 PikPak 挂载数据
+func (a *AlistBatch) BuildPikPakData(mountPath string, pikPakUrl string) []byte {
 	params, err := url.Parse(pikPakUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -85,12 +79,12 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 	}
 
 	addition := models.PikPakAddition{
-		RootFolderId:   shareFolder,
-		ShareId:        shareId,
-		SharePwd:       sharePwd,
-		OrderBy:        "",
-		OrderDirection: "",
-  Platform:         "android",
+		RootFolderId:          shareFolder,
+		ShareId:               shareId,
+		SharePwd:              sharePwd,
+		OrderBy:               "",
+		OrderDirection:        "",
+		Platform:              "android",
 		UseTranscodingAddress: true,
 	}
 	additionJson, _ := json.Marshal(addition)
@@ -115,8 +109,8 @@ func BuildPikPakData(mountPath string, pikPakUrl string, config *models.Config) 
 	return pushJson
 }
 
-// 生成添加阿里云盘分享批量更新 RefreshToken json字符串
-func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshToken string) []byte {
+// 构建阿里云盘批量更新 RefreshToken 数据
+func (a *AlistBatch) BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshToken string) []byte {
 	var oldAddition models.AliAddition
 	json.Unmarshal([]byte(aliShareData.Addition), &oldAddition)
 	oldAddition.RefreshToken = refreshToken
@@ -127,7 +121,8 @@ func BuildUpdateAliRefreshToken(aliShareData models.StorageListContent, refreshT
 	return pushJson
 }
 
-func BuildOnedriverApp(mountPath string, emailInfo string, config *models.Config) []byte {
+// 构建 Onedrive APP 挂载数据
+func (a *AlistBatch) BuildOnedriverApp(mountPath string, emailInfo string) []byte {
 	params := strings.Split(emailInfo, ":")
 	var tid int
 	var email, folderPath string
@@ -143,10 +138,10 @@ func BuildOnedriverApp(mountPath string, emailInfo string, config *models.Config
 
 	addition := models.OnedriveAppAddition{
 		RootFolderPath: folderPath,
-		Region:         config.OneDriveApp.Region,
-		ClientId:       config.OneDriveApp.Tenant[tid-1].ClientId,
-		ClientSecret:   config.OneDriveApp.Tenant[tid-1].ClientSecret,
-		TenantId:       config.OneDriveApp.Tenant[tid-1].TenantId,
+		Region:         a.config.OneDriveApp.Region,
+		ClientId:       a.config.OneDriveApp.Tenants[tid-1].ClientId,
+		ClientSecret:   a.config.OneDriveApp.Tenants[tid-1].ClientSecret,
+		TenantId:       a.config.OneDriveApp.Tenants[tid-1].TenantId,
 		Email:          email,
 		ChunkSize:      5,
 	}
