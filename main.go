@@ -76,4 +76,5 @@ func main() {
 	} else {
 		batcher.UpdateToken()
 	}
+	batcher.Close()
 }

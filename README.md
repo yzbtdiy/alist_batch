@@ -1,6 +1,6 @@
 ## Alist批量添加阿里云资源(Golang)
 
-* 使用 Golang 实现了 Alist 批量添加阿里云盘分享和PikPak分享
+* 使用 Golang 实现了 Alist 批量添加阿里云盘分享, PikPak分享, OneDrive APP
 * 自动获取并保存 token
 * 操作前验证 cookie 有效性, cookie 无效自动更新
 * 配置文件和分享链接文件使用 yaml 文件保存
@@ -41,5 +41,5 @@
 ### other
 
 * alist 的登录用户和密码仅用于自动获取 cookie, 手动获取有效cookie填入config.yaml可以不用添加用户和密码
-* 目前实现了阿里云盘分享链接和 PikPak 分享链接的批量添加
+* 目前实现了阿里云盘分享链接和 PikPak 分享链接, OneDrive APP的批量添加
 * 此工具只是批量挂载工具, 挂载后视频不能播放请关注alist的github issues
