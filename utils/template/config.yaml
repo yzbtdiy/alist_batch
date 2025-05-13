@@ -8,6 +8,7 @@ aliyun:
     refresh_token: ALI_YUNPAN_REFRESH_TOKEN
 pikpak:
     enable: false
+    use_transcoding_address: true
     username: PIKPAK_EMAIL
     password: PIKPAK_PASSWORD
 onedrive_app:
