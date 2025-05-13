@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/yzbtdiy/alist_batch/models"
 	"github.com/yzbtdiy/alist_batch/utils"
 )
 
@@ -35,7 +36,7 @@ func (a *AlistBatch) PushAliShares() {
 }
 
 // 批量添加 PikPak 分享链接
-func (a *AlistBatch) PushPikPakShares() {
+func (a *AlistBatch) PushPikPakShares(config *models.Config) {
 	shareListData := utils.GetShareList("./pik_share.yaml")
 	wg := &sync.WaitGroup{}
 	for category, shareList := range shareListData {
@@ -43,7 +44,7 @@ func (a *AlistBatch) PushPikPakShares() {
 			wg.Add(1)
 			go func(category, shareName, shareUrl string) {
 				defer wg.Done()
-				pushData := a.BuildPikPakData(`/`+category+`/`+shareName, shareUrl)
+				pushData := a.BuildPikPakData(`/`+category+`/`+shareName, shareUrl, config.PikPak.UseTranscodingAddress)
 				pushRes := a.client.Post(a.addStorageApi, pushData)
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")

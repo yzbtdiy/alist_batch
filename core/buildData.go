@@ -58,7 +58,7 @@ func (a *AlistBatch) BuildAliPushData(mountPath string, aliUrl string) []byte {
 }
 
 // 构建 PikPak 挂载数据
-func (a *AlistBatch) BuildPikPakData(mountPath string, pikPakUrl string) []byte {
+func (a *AlistBatch) BuildPikPakData(mountPath string, pikPakUrl string, useTranscodingAddress bool) []byte {
 	params, err := url.Parse(pikPakUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -85,7 +85,7 @@ func (a *AlistBatch) BuildPikPakData(mountPath string, pikPakUrl string) []byte 
 		OrderBy:               "",
 		OrderDirection:        "",
 		Platform:              "android",
-		UseTranscodingAddress: true,
+		UseTranscodingAddress: useTranscodingAddress,
 	}
 	additionJson, _ := json.Marshal(addition)
 	additionData := string(additionJson)

@@ -65,7 +65,7 @@ func main() {
 				batcher.PushAliShares()
 			}
 			if conf.PikPak.Enable {
-				batcher.PushPikPakShares()
+				batcher.PushPikPakShares(conf)
 			}
 			if conf.OneDriveApp.Enable {
 				batcher.PushOnedriveApp()

@@ -24,9 +24,10 @@ type Aliyun struct {
 
 // PikPak 配置
 type PikPak struct {
-	Enable   bool   `yaml:"enable"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
+	Enable                bool   `yaml:"enable"`
+	UseTranscodingAddress bool   `yaml:"use_transcoding_address"`
+	Username              string `yaml:"username"`
+	Password              string `yaml:"password"`
 }
 
 // OneDrive APP 配置
