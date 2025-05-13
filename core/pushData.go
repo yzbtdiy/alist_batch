@@ -36,7 +36,7 @@ func (a *AlistBatch) PushAliShares() {
 }
 
 // 批量添加 PikPak 分享链接
-func (a *AlistBatch) PushPikPakShares(config *models.Config) {
+func (a *AlistBatch) PushPikPakShares(pikPakConfig *models.PikPak) {
 	shareListData := utils.GetShareList("./pik_share.yaml")
 	wg := &sync.WaitGroup{}
 	for category, shareList := range shareListData {
@@ -44,7 +44,7 @@ func (a *AlistBatch) PushPikPakShares(config *models.Config) {
 			wg.Add(1)
 			go func(category, shareName, shareUrl string) {
 				defer wg.Done()
-				pushData := a.BuildPikPakData(`/`+category+`/`+shareName, shareUrl, config.PikPak.UseTranscodingAddress)
+				pushData := a.BuildPikPakData(`/`+category+`/`+shareName, shareUrl, pikPakConfig.UseTranscodingAddress)
 				pushRes := a.client.Post(a.addStorageApi, pushData)
 				if pushRes.Code == 200 {
 					log.Println(category + " " + shareName + " 添加完成")
