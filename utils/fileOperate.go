@@ -34,6 +34,7 @@ func GetConfig(fileName string) *models.Config {
 	}
 	err = yaml.Unmarshal(content, &_conf)
 	if err != nil {
+		fmt.Println(fileName + "文件格式不正确")
 		fmt.Println(err)
 	}
 	return _conf
@@ -56,8 +57,13 @@ func GetShareList(fileName string) map[string]map[string]string {
 	if err != nil {
 		fmt.Println("读取分享列表文件出错")
 		fmt.Println(err)
+		return shareListContent
 	}
-	yaml.Unmarshal(content, &shareListContent)
+	err = yaml.Unmarshal(content, &shareListContent)
+	if err != nil {
+		fmt.Println(fileName + "文件格式不正确")
+		fmt.Println(err)
+	}
 	return shareListContent
 }
 
